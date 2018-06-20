@@ -1,0 +1,136 @@
+﻿body
+{
+    background-color: #fff;
+    overflow: hidden;
+    margin: 0;
+}
+
+.logo
+{
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin: 0 0 0 -516px;
+    display: none;
+}
+
+.puzzel-canvas
+{
+    overflow: hidden;
+    position: absolute;
+}
+
+.image-canvas
+{
+    overflow: hidden;
+    position: absolute;
+}
+.puzzle-image
+{
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    top: 80%;
+}
+
+/*
+.zoomIn,
+.zoomOut,
+.help,
+.reload
+{
+    z-index: 100;
+    position: absolute;
+    opacity: 0.5;
+    cursor: pointer;
+}*/
+
+.charms
+{
+    overflow: hidden;
+    position: absolute;
+    background: #ccc;
+    opacity: 0.7;
+    right: 0%;
+    height: 100%;
+    width: 96px;
+}
+
+.fontChoice img{
+    width: 25%;
+    vertical-align: middle;
+}
+
+.userSelect {
+    vertical-align: middle;
+}
+
+.zoomIn:hover,
+.zoomOut:hover,
+.help:hover,
+.reload:hover
+{
+    opacity: 1.0;
+}
+
+/*
+.help
+{
+    right: 0%;
+    top: 50%;
+    margin: -200px 5px 0 0;
+}
+
+.zoomIn
+{
+    right: 0%;
+    top: 50%;
+    margin: -100px 5px 0 0;
+}
+
+.zoomOut
+{
+    right: 0%;
+    top: 50%;
+    margin: 0px 5px 0 0;
+}
+
+.reload
+{
+    right: 0%;
+    top: 50%;
+    margin: 100px 5px 0 0;
+}*/
+
+button {
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    border: none;
+    cursor:pointer;
+    overflow: hidden;
+}
+
+.customCombobox{
+    width:500px;
+    height:30px;
+    border:1px solid black;
+    /*background-image:url('../../Images/expand-rect.png');*/
+    background-repeat:no-repeat;
+    background-position-x:right;
+    margin:0;
+    padding:0;
+    cursor:pointer;
+}
+.ulcustomCombobox {
+    /*display: none;*/ /*hide dropdown by default*/
+    width: 500px;
+    background-color: white;
+    border: 1px solid black;
+    border-top: none;
+    margin: 0;
+    padding: 0;
+}
+.ulcustomCombobox li {
+    border-top: 1px solid black;
+    height: 30px;
+}

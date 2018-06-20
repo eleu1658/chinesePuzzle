@@ -1,0 +1,662 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Chinese Puzzle</title>
+    <!--
+    <meta property="og:title" content="Html5 Jigsaw Puzzle">
+    <meta property="og:image" content="http://dl.dropbox.com/u/5728198/html5puzzle/content/images/puzzle.jpg">
+    <meta property="og:description" content="An online jigsaw puzzle by Marcelo Ricardo de Oliveira using the stunning features of the Paper JS framework">
+    -->
+    <link href="src/css/Puzzle.css" rel="stylesheet"/>
+    <link href="src/css/site.css" rel="stylesheet">
+    <script type="text/javascript" src="src/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="src/js/paper.js"></script>
+    <script type="text/javascript" src="src/js/opentype.js"></script>
+    <script type="text/paperscript" src="src/js/ChinesePuzzle.js" canvas="puzzel-canvas"></script>
+
+    <style>
+    .dropdown {
+        position: relative;
+        display: inline-block;
+        border:1px solid #000000;
+    }
+
+    .dropdown-content {
+        display: none;
+        border:1px solid #000000;
+        position: absolute;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .desc {
+        padding: 15px;
+        text-align: center;
+    }
+    </style>
+
+</head>
+<body>
+  <div class="container">
+    <div id="sel-button">
+     <button id="" title="Hint" class="help" style="display: none;"><img width="64" height="64" src="src/images/help.png" />
+     <button id="" title="Zoom In" class="zoomIn" style="display: none;"><img width="64" height="64" src="src/images/zoomIn.png" />
+     <button id="" title="Zoom Out" class="zoomOut" style="display: none;"><img width="64" height="64" src="src/images/zoomOut.png" />
+     <button id="" title="Reload" class="reload" style="display: none;"><img width="64" height="64" src="src/images/reload.png" />
+     <button id="" title="New Game" class="newGame" style="display: none;float: right;margin-right: 30px;" onclick="newGame()"><img width="144" height="64" src="src/images/newGame.png" />
+     <button id="" title="Go" class="go"><img width="auto" height="64" src="src/images/go.png" />
+    </div>
+
+    <div style="position: relative">
+      <div id="glyph-display">
+        <canvas id="puzzel-canvas" class="puzzel-canvas" width="900" height="500" style="display: none;border:1px solid #000000;"></canvas>
+        <canvas id="image-canvas" class="image-canvas" width="384" height="384" style="border:1px solid #000000;"></canvas>
+        <div id="charms" class="charms" style="display: none;">
+            <img width="88" height="88" Title="Zoom In" src="src/images/zoomIn.png" class="zoomIn"/>
+            <img width="88" height="88" Title="Zoom Out" src="src/images/zoomOut.png" class="zoomOut"/>
+            <img width="88" height="88" title="Hint" src="src/images/help.png" class="help"/>
+            <img width="88" height="88" Title="Reload" src="src/images/reload.png" class="reload"/>
+        </div>
+      </div>
+      <div id="fontChoice" class="fontChoice" >
+        <label style="display: inline;" for="fontChoice1">
+          <input type="radio" id="fontChoice1" name="fontChoice" value="ukai.ttf" onchange="fontSelectionChanged(this.value)" checked="checked"> <img src="src/images/ukai.gif"></label><br>
+        <label style="display: inline;" for="fontChoice2">
+          <input type="radio" id="fontChoice2" name="fontChoice" value="UnYetgul.ttf" onchange="fontSelectionChanged(this.value)"> <img src="src/images/UnYetgul.gif"></label><br>
+        <label style="display: inline;" for="fontChoice3">
+          <input type="radio" id="fontChoice3" name="fontChoice" value="WCL-01.ttf" onchange="fontSelectionChanged(this.value)"> <img src="src/images/WCL-01.gif"></label><br>
+        <label style="display: inline;" for="fontChoice4">
+          <input type="radio" id="fontChoice4" name="fontChoice" value="WCL-03.ttf" onchange="fontSelectionChanged(this.value)"> <img src="src/images/WCL-03.gif"></label><br>
+        <label style="display: inline;" for="fontChoice5">
+          <input type="radio" id="fontChoice5" name="fontChoice" value="wp010-08.ttf" onchange="fontSelectionChanged(this.value)"> <img src="src/images/wp010-08.gif"></label><br>
+        <label style="display: inline;" for="fontChoice6">
+          <input type="radio" id="fontChoice6" name="fontChoice" value="wt009.ttf" onchange="fontSelectionChanged(this.value)"> <img src="src/images/wt009.gif"></label><br>
+        <label style="display: inline;" for="fontChoice7">
+          <input type="radio" id="fontChoice7" name="fontChoice" value="wt021.ttf" onchange="fontSelectionChanged(this.value)"> <img src="src/images/wt021.gif"></label><br>
+        <label style="display: inline;" for="fontChoice8">
+          <input type="radio" id="fontChoice8" name="fontChoice" value="wt028.ttf" onchange="fontSelectionChanged(this.value)"> <img src="src/images/wt028.gif"></label><br>
+        <label style="display: inline;" for="fontChoice9">
+          <input type="radio" id="fontChoice9" name="fontChoice" value="wt034.ttf" onchange="fontSelectionChanged(this.value)"> <img src="src/images/wt034.gif"></label><br>
+        <label style="display: inline;" for="fontChoice10">
+          <input type="radio" id="fontChoice10" name="fontChoice" value="wt064.ttf" onchange="fontSelectionChanged(this.value)"> <img src="src/images/wt064.gif"></label><br>
+        <label style="display: inline;" for="fontChoice11">
+          <input type="radio" id="fontChoice11" name="fontChoice" value="wtg-06cut1x.ttf" onchange="fontSelectionChanged(this.value)"> <img src="src/images/wtg-06cut1x.gif"></label>
+      </div>
+      <div style="clear: both"></div>
+    </div>
+    <br>
+    <div id="sizeChoice" class="puzzelSizeChoice" >
+       <input type="radio" id="level1Choice" name="puzzelSizeChoice" class="puzzelSizeChoice" value="4">
+       <label for="level1Choice">Level 1 (4 X 4)</label>
+       <input type="radio" id="level2Choice" name="puzzelSizeChoice" class="puzzelSizeChoice" value="5">
+       <label for="level2Choice">Level 2 (5 X 5)</label>
+       <input type="radio" id="level3Choice" name="puzzelSizeChoice" class="puzzelSizeChoice" value="6" checked>
+       <label for="level3Choice">Level 3 (6 X 6)</label>
+       <input type="radio" id="level4Choice" name="puzzelSizeChoice" class="puzzelSizeChoice" value="7">
+       <label for="level4Choice">Level 4 (7 X 7)</label>
+       <input type="radio" id="level5Choice" name="puzzelSizeChoice" class="puzzelSizeChoice" value="8">
+       <label for="level5Choice">Level 5 (8 X 8)</label>
+     </div>
+     <div id="userSelectWord" class="userSelect">
+         <label for="uword">Enter a word: </label>
+         <input type="text" id="uword" name="name">
+         <button id="userSelWord" title="Search the word" onclick="clickedUserSelect()" class="userSelect"><img src="src/images/userSelect.png" />
+     </div>
+     <br>
+     <div id="sel-button" class="sel-button">
+      <button id="firstPage" title="First Page" onclick="clickedFirstPage()" class="first"><img src="src/images/firstPage.png" />
+      <button id="prev5" title="Prev 5 Pages" onclick="clickedPrev5Page()" class="prev5"><img src="src/images/prev5Page.png" />
+      <button id="prev" title="Prev Page" onclick="clickedPrevPage()" class="prev"><img src="src/images/prevPage.png" />
+      <button id="next" title="Next Page" onclick="clickedNextPage()" class="next"><img src="src/images/nextPage.png" />
+      <button id="next5" title="Next 5 Pages" onclick="clickedNext5Page()" class="next5"><img src="src/images/next5Page.png" />
+      <button id="lastPage" title="Last Page" onclick="clickedLastPage()" class="last"><img src="src/images/lastPage.png" />
+     </div>
+    <div>
+        <span id="pagination" class="pagination" style="display: none;"></span>
+        <br>
+        <div id="glyph-list-end" class="glyph-list-end"></div>
+    </div>
+  </div>
+  <img width="384" height="384" id="puzzle-image" class="puzzle-image" style="display: none;" src="src/images/Earth.png" />
+  <img width="180" height="180" id="empty" style="display: none;" src="src/images/empty.png" />
+
+<!-- display chinese font here-->
+<script>
+var cellCount = 100,
+    cellWidth = 44,
+    cellHeight = 40,
+    cellMarginTop = 1,
+    cellMarginBottom = 8,
+    cellMarginLeftRight = 1,
+    glyphMargin = 5,
+    pixelRatio = window.devicePixelRatio || 1;
+
+var pageSelected, totalPages, font, fontScale, fontSize, fontBaseline, glyphScale, glyphSize, glyphBaseline;
+
+function enableHighDPICanvas(canvas) {
+    if (typeof canvas === 'string') {
+        canvas = document.getElementById(canvas);
+    }
+    var pixelRatio = window.devicePixelRatio || 1;
+    if (pixelRatio === 1) return;
+    var oldWidth = canvas.width;
+    var oldHeight = canvas.height;
+    canvas.width = oldWidth * pixelRatio;
+    canvas.height = oldHeight * pixelRatio;
+    canvas.style.width = oldWidth + 'px';
+    canvas.style.height = oldHeight + 'px';
+    canvas.getContext('2d').scale(pixelRatio, pixelRatio);
+}
+
+function showErrorMessage(message) {
+    var el = document.getElementById('message');
+    if (!message || message.trim().length === 0) {
+        el.style.display = 'none';
+    } else {
+        el.style.display = 'block';
+    }
+    el.innerHTML = message;
+}
+
+function pathCommandToString(cmd) {
+    var str = '<strong>' + cmd.type + '</strong> ' +
+        ((cmd.x !== undefined) ? 'x='+cmd.x+' y='+cmd.y+' ' : '') +
+        ((cmd.x1 !== undefined) ? 'x1='+cmd.x1+' y1='+cmd.y1+' ' : '') +
+        ((cmd.x2 !== undefined) ? 'x2='+cmd.x2+' y2='+cmd.y2 : '');
+    return str;
+}
+
+function contourToString(contour) {
+    return '<pre class="contour">' + contour.map(function(point) {
+        return '<span class="' + (point.onCurve ? 'on' : 'off') + 'curve">x=' + point.x + ' y=' + point.y + '</span>';
+    }).join('\n') + '</pre>';
+}
+
+function formatUnicode(unicode) {
+    unicode = unicode.toString(16);
+    if (unicode.length > 4) {
+        return ("000000" + unicode.toUpperCase()).substr(-6)
+    } else {
+        return ("0000" + unicode.toUpperCase()).substr(-4)
+    }
+}
+
+function displayGlyphData(glyphIndex) {
+    var container = document.getElementById('glyph-data');
+    if (glyphIndex < 0) {
+        container.innerHTML = '';
+        return;
+    }
+    var glyph = font.glyphs.get(glyphIndex),
+        html = '<dl>';
+    html += '<dt>name</dt><dd>'+glyph.name+'</dd>';
+
+    if (glyph.unicodes.length > 0) {
+        html += '<dt>unicode</dt><dd>'+ glyph.unicodes.map(formatUnicode).join(', ') +'</dd>';
+    }
+    html += '<dt>index</dt><dd>'+glyph.index+'</dd>';
+
+    if (glyph.xMin !== 0 || glyph.xMax !== 0 || glyph.yMin !== 0 || glyph.yMax !== 0) {
+        html += '<dt>xMin</dt><dd>'+glyph.xMin+'</dd>' +
+            '<dt>xMax</dt><dd>'+glyph.xMax+'</dd>' +
+            '<dt>yMin</dt><dd>'+glyph.yMin+'</dd>' +
+            '<dt>yMax</dt><dd>'+glyph.yMax+'</dd>';
+    }
+    html += '<dt>advanceWidth</dt><dd>'+glyph.advanceWidth+'</dd>';
+    if(glyph.leftSideBearing !== undefined) {
+        html += '<dt>leftSideBearing</dt><dd>'+glyph.leftSideBearing+'</dd>';
+    }
+    html += '</dl>';
+    if (glyph.numberOfContours > 0) {
+        var contours = glyph.getContours();
+        html += 'contours:<div id="glyph-contours">' + contours.map(contourToString).join('\n') + '</div>';
+    } else if (glyph.isComposite) {
+        html += '<br>This composite glyph is a combination of :<ul><li>' +
+            glyph.components.map(function(component) {
+                if (component.matchedPoints === undefined) {
+                    return 'glyph '+component.glyphIndex+' at dx='+component.dx+', dy='+component.dy;
+                } else {
+                    return 'glyph '+component.glyphIndex+' at matchedPoints=['+component.matchedPoints+']';
+                }
+            }).join('</li><li>') + '</li></ul>';
+    } else if (glyph.path) {
+        html += 'path:<br><pre>  ' + glyph.path.commands.map(pathCommandToString).join('\n  ') + '\n</pre>';
+    }
+    container.innerHTML = html;
+}
+
+var arrowLength = 10,
+    arrowAperture = 4;
+
+function drawArrow(ctx, x1, y1, x2, y2) {
+    var dx = x2 - x1,
+        dy = y2 - y1,
+        segmentLength = Math.sqrt(dx*dx + dy*dy),
+        unitx = dx / segmentLength,
+        unity = dy / segmentLength,
+        basex = x2 - arrowLength * unitx,
+        basey = y2 - arrowLength * unity,
+        normalx = arrowAperture * unity,
+        normaly = -arrowAperture * unitx;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(basex + normalx, basey + normaly);
+    ctx.lineTo(basex - normalx, basey - normaly);
+    ctx.lineTo(x2, y2);
+    ctx.closePath();
+    ctx.fill();
+}
+
+/**
+ * This function is Path.prototype.draw with an arrow
+ * at the end of each contour.
+ */
+function drawPathWithArrows(ctx, path) {
+    var i, cmd, x1, y1, x2, y2;
+    var arrows = [];
+    ctx.beginPath();
+    for (i = 0; i < path.commands.length; i += 1) {
+        cmd = path.commands[i];
+        if (cmd.type === 'M') {
+            if(x1 !== undefined) {
+                arrows.push([ctx, x1, y1, x2, y2]);
+            }
+            ctx.moveTo(cmd.x, cmd.y);
+        } else if (cmd.type === 'L') {
+            ctx.lineTo(cmd.x, cmd.y);
+            x1 = x2;
+            y1 = y2;
+        } else if (cmd.type === 'C') {
+            ctx.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+            x1 = cmd.x2;
+            y1 = cmd.y2;
+        } else if (cmd.type === 'Q') {
+            ctx.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
+            x1 = cmd.x1;
+            y1 = cmd.y1;
+        } else if (cmd.type === 'Z') {
+            arrows.push([ctx, x1, y1, x2, y2]);
+            ctx.closePath();
+        }
+        x2 = cmd.x;
+        y2 = cmd.y;
+    }
+    if (path.fill) {
+        ctx.fillStyle = path.fill;
+        ctx.fill();
+    }
+    if (path.stroke) {
+        ctx.strokeStyle = path.stroke;
+        ctx.lineWidth = path.strokeWidth;
+        ctx.stroke();
+    }
+    ctx.fillStyle = '#000000';
+    //arrows.forEach(function(arrow) {
+    //    drawArrow.apply(null, arrow);
+    //});
+}
+
+function displayGlyph(glyphIndex) {
+    //var canvas = document.getElementById('glyph'),
+    var canvas = document.getElementById('image-canvas'),
+        ctx = canvas.getContext('2d'),
+        width = canvas.width / pixelRatio,
+        height = canvas.height / pixelRatio;
+    ctx.clearRect(0, 0, width, height);
+    if(glyphIndex < 0) return;
+    var grd = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    var rColor = Math.floor(Math.random() * 256) % 255;
+    var gColor = Math.floor(Math.random() * 256) % 255;
+    var bColor = Math.floor(Math.random() * 256) % 255;
+    var rgbColor = 'rgb(' + rColor + ',' + gColor +',' + bColor +')';
+    grd.addColorStop(0, rgbColor); // grd.addColorStop(0,'rgb(0,0,0)');
+    grd.addColorStop(1,"lightblue");
+
+    // Fill with gradient
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    var glyph = font.glyphs.get(glyphIndex),
+        glyphWidth = glyph.advanceWidth * glyphScale,
+        xmin = (width - glyphWidth)/2,
+        xmax = (width + glyphWidth)/2,
+        x0 = xmin,
+        markSize = 10;
+
+    ctx.fillStyle = '#606060';
+    ctx.fillRect(xmin-markSize+1, glyphBaseline, markSize, 1);
+    ctx.fillRect(xmin, glyphBaseline, 1, markSize);
+    ctx.fillRect(xmax, glyphBaseline, markSize, 1);
+    ctx.fillRect(xmax, glyphBaseline, 1, markSize);
+    ctx.textAlign = 'center';
+    ctx.fillText('0', xmin, glyphBaseline+markSize+10);
+    ctx.fillText(glyph.advanceWidth, xmax, glyphBaseline+markSize+10);
+
+    ctx.fillStyle = '#000000';
+    var path = glyph.getPath(x0, glyphBaseline, glyphSize);
+    //var path = glyph.getPath(0, 0, glyphSize);
+    path.fill = '#000';
+    path.stroke = '#000000';
+    path.strokeWidth = 1.5;
+    drawPathWithArrows(ctx, path);
+    //glyph.drawPoints(ctx, x0, glyphBaseline, glyphSize);
+    {
+      var resizedCanvas = document.createElement("canvas");
+      var resizedContext = resizedCanvas.getContext("2d");
+
+      var puzzelSize = getPuzzelSize();
+      var newSize = parseInt(puzzelSize) * 64
+      resizedCanvas.height = newSize;
+      resizedCanvas.width = newSize;
+      resizedContext.drawImage(canvas, (canvas.width-384)/2, (canvas.height-384)/2, 384, 384,
+                 0, 0, resizedCanvas.width, resizedCanvas.height);
+      var dataURL = resizedCanvas.toDataURL();
+      document.getElementById('puzzle-image').src = dataURL;
+    }
+}
+
+function renderGlyphItem(canvas, glyphIndex) {
+    var cellMarkSize = 4;
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, cellWidth, cellHeight);
+    if (glyphIndex >= font.numGlyphs) return;
+
+    ctx.fillStyle = '#606060';
+    ctx.font = '9px sans-serif';
+    ctx.fillText(glyphIndex, 1, cellHeight-1);
+    var glyph = font.glyphs.get(glyphIndex),
+        glyphWidth = glyph.advanceWidth * fontScale,
+        xmin = (cellWidth - glyphWidth)/2,
+        xmax = (cellWidth + glyphWidth)/2,
+        x0 = xmin;
+
+    ctx.fillStyle = '#a0a0a0';
+    ctx.fillRect(xmin-cellMarkSize+1, fontBaseline, cellMarkSize, 1);
+    ctx.fillRect(xmin, fontBaseline, 1, cellMarkSize);
+    ctx.fillRect(xmax, fontBaseline, cellMarkSize, 1);
+    ctx.fillRect(xmax, fontBaseline, 1, cellMarkSize);
+
+    ctx.fillStyle = '#000000';
+    glyph.draw(ctx, x0, fontBaseline, fontSize);
+}
+
+function clickedFirstPage() {
+  displayGlyphPage(0);
+}
+
+function clickedPrev5Page() {
+  //if(pageSelected > 0)
+    displayGlyphPage(pageSelected-5);
+}
+
+function clickedPrevPage() {
+  //if(pageSelected > 0)
+    displayGlyphPage(pageSelected-1);
+}
+
+function clickedNextPage() {
+  //if(pageSelected < totalPages-1)
+    displayGlyphPage(pageSelected+1);
+}
+
+function clickedNext5Page() {
+  //if(pageSelected < totalPages-1)
+    displayGlyphPage(pageSelected+5);
+}
+
+function clickedLastPage() {
+  displayGlyphPage(totalPages-1);
+}
+
+
+function clickedUserSelect() {
+  var str = document.getElementById("uword").value;
+  var userChar = str.charAt(0);
+  var glyphIndex = font.charToGlyph(userChar);
+  if (glyphIndex.index < font.numGlyphs) {
+      displayGlyph(glyphIndex.index);
+      //displayGlyphData(glyphIndex);
+  }
+}
+
+function getPuzzelSize() {
+  var size_choice = document.getElementsByName('puzzelSizeChoice');
+  var size_value = "4"; //default to 4
+  for(var i = 0; i < size_choice.length; i++){
+      if(size_choice[i].checked){
+          size_value = size_choice[i].value;
+          break;
+      }
+  }
+  return(size_value);
+}
+
+function fontSelectionChanged(fontValue) {
+  //prepareGlyphList();
+  var newFontFileName = "fonts/" + fontValue;
+  opentype.load(newFontFileName, function(err, font) {
+      var amount, glyph, ctx, x, y, fontSize;
+      if (err) {
+          showErrorMessage(err.toString());
+          return;
+      }
+      onFontLoaded(font);
+  });
+
+}
+
+function displayGlyphPage(pageNum) {
+    if(pageNum < 0)
+      pageNum = 0;
+    else if(pageNum >= totalPages)
+      pageNum = totalPages-1;
+    pageSelected = pageNum;
+    document.getElementById('p'+pageNum).className = 'page-selected';
+    var firstGlyph = pageNum * cellCount;
+    for(var i = 0; i < cellCount; i++) {
+        renderGlyphItem(document.getElementById('g'+i), firstGlyph+i);
+    }
+}
+
+function pageSelect(event) {
+    document.getElementsByClassName('page-selected')[0].className = '';
+    displayGlyphPage(+event.target.id.substr(1));
+}
+
+function initGlyphDisplay() {
+//    var glyphBgCanvas = document.getElementById('glyph-bg'),
+    var glyphBgCanvas = document.getElementById('image-canvas'),
+        w = glyphBgCanvas.width / pixelRatio,
+        h = glyphBgCanvas.height / pixelRatio,
+        glyphW = w - glyphMargin*2,
+        glyphH = h - glyphMargin*2,
+        head = font.tables.head,
+        maxHeight = head.yMax - head.yMin,
+        ctx = glyphBgCanvas.getContext('2d');
+
+    glyphScale = Math.min(glyphW/(head.xMax - head.xMin), glyphH/maxHeight);
+    glyphSize = glyphScale * font.unitsPerEm;
+    glyphBaseline = glyphMargin + glyphH * head.yMax / maxHeight;
+
+    function hline(text, yunits) {
+        ypx = glyphBaseline - yunits * glyphScale;
+        ctx.fillText(text, 2, ypx+3);
+        ctx.fillRect(80, ypx, w, 1);
+    }
+
+    ctx.clearRect(0, 0, w, h);
+    /*ctx.fillStyle = '#a0a0a0';
+    hline('Baseline', 0);
+    hline('yMax', font.tables.head.yMax);
+    hline('yMin', font.tables.head.yMin);
+    hline('Ascender', font.tables.hhea.ascender);
+    hline('Descender', font.tables.hhea.descender);
+    hline('Typo Ascender', font.tables.os2.sTypoAscender);
+    hline('Typo Descender', font.tables.os2.sTypoDescender);*/
+}
+
+function onFontLoaded(font) {
+    window.font = font;
+
+    var w = cellWidth - cellMarginLeftRight * 2,
+        h = cellHeight - cellMarginTop - cellMarginBottom,
+        head = font.tables.head,
+        maxHeight = head.yMax - head.yMin;
+    fontScale = Math.min(w/(head.xMax - head.xMin), h/maxHeight);
+    fontSize = fontScale * font.unitsPerEm;
+    fontBaseline = cellMarginTop + h * head.yMax / maxHeight;
+
+    var pagination = document.getElementById("pagination");
+    pagination.innerHTML = '';
+    var fragment = document.createDocumentFragment();
+    var numPages = Math.ceil(font.numGlyphs / cellCount);
+    totalPages = numPages;
+    //var numPages = 100;
+    for(var i = 0; i < numPages; i++) {
+        var link = document.createElement('span');
+        var lastIndex = Math.min(font.numGlyphs-1, (i+1)*cellCount-1);
+        link.textContent = i*cellCount + '-' + lastIndex;
+        link.id = 'p' + i;
+        link.addEventListener('click', pageSelect, false);
+        fragment.appendChild(link);
+        // A white space allows to break very long lines into multiple lines.
+        // This is needed for fonts with thousands of glyphs.
+        fragment.appendChild(document.createTextNode(' '));
+    }
+    pagination.appendChild(fragment);
+
+    initGlyphDisplay();
+    displayGlyphPage(25);
+    //displayGlyph(-1);
+    //displayGlyphData(-1);
+}
+
+function onReadFile(e) {
+    document.getElementById('font-name').innerHTML = '';
+    var file = e.target.files[0];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            font = opentype.parse(e.target.result);
+            showErrorMessage('');
+            onFontLoaded(font);
+        } catch (err) {
+            showErrorMessage(err.toString());
+            if (err.stack) console.log(err.stack);
+            throw(err);
+        }
+    };
+    reader.onerror = function(err) {
+        showErrorMessage(err.toString());
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+
+function cellSelect(event) {
+    if (!font) return;
+    var firstGlyphIndex = pageSelected*cellCount,
+        cellIndex = +event.target.id.substr(1),
+        glyphIndex = firstGlyphIndex + cellIndex;
+    if (glyphIndex < font.numGlyphs) {
+        displayGlyph(glyphIndex);
+        //displayGlyphData(glyphIndex);
+    }
+}
+
+function prepareGlyphList() {
+    var marker = document.getElementById('glyph-list-end'),
+        parent = marker.parentElement;
+    for(var i = 0; i < cellCount; i++) {
+        var canvas = document.createElement('canvas');
+        canvas.width = cellWidth;
+        canvas.height = cellHeight;
+        canvas.className = 'item';
+        canvas.id = 'g'+i;
+        canvas.addEventListener('click', cellSelect, false);
+        enableHighDPICanvas(canvas);
+        parent.insertBefore(canvas, marker);
+    }
+}
+
+function newGame() {
+
+  $('.help').hide();
+  $('.zoomIn').hide();
+  $('.zoomOut').hide();
+  $('.reload').hide();
+  $('.newGame').hide();
+  $('.puzzel-canvas').hide();
+  $('.pagination').hide();
+
+
+  $('.go').show();
+  $('.image-canvas').show();
+  $('.fontChoice').show();
+  $('.puzzelSizeChoice').show();
+  $('.userSelect').show();
+  $('.sel-button').show();
+
+  var marker = document.getElementById("glyph-list-end");
+  var list = marker.parentElement;
+  if (list.hasChildNodes()) {
+    var children = list.childNodes;
+    for (var i = 0; i < children.length; i++) {
+      if(children[i].nodeName == "CANVAS") {
+        children[i].style.display = "inline";
+      }
+    }
+  }
+
+
+  var fontFileName = 'fonts/ukai.ttf';
+  //prepareGlyphList();
+  opentype.load(fontFileName, function(err, font) {
+      var amount, glyph, ctx, x, y, fontSize;
+      if (err) {
+          showErrorMessage(err.toString());
+          return;
+      }
+      onFontLoaded(font);
+  });
+}
+
+var fontFileName = 'fonts/ukai.ttf';
+//var fontFileName = 'fonts/UnYetgul.ttf';
+//var fontFileName = 'fonts/WCL-01.ttf';
+//var fontFileName = 'fonts/WCL-03.ttf';
+//var fontFileName = 'fonts/wp010-08.ttf';
+//var fontFileName = 'fonts/wt009.ttf';
+//var fontFileName = 'fonts/wt021.ttf';
+//var fontFileName = 'fonts/wt028.ttf';
+//var fontFileName = 'fonts/wt034.ttf';
+//var fontFileName = 'fonts/wt064.ttf';
+//var fontFileName = 'fonts/wtg-06cut1x.ttf';
+
+//document.getElementById('font-name').innerHTML = fontFileName.split('/')[1];
+
+//var fileButton = document.getElementById('file');
+//fileButton.addEventListener('change', onReadFile, false);
+
+//enableHighDPICanvas('glyph-bg');
+//enableHighDPICanvas('glyph');
+
+prepareGlyphList();
+opentype.load(fontFileName, function(err, font) {
+    var amount, glyph, ctx, x, y, fontSize;
+    if (err) {
+        showErrorMessage(err.toString());
+        return;
+    }
+    onFontLoaded(font);
+});
+</script>
+<!--end display chinese font -->
+</body>
+</html>
